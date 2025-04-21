@@ -34,7 +34,7 @@ h1 {
   cursor: pointer;
 }
 
-/* 💜 Winning cell highlight */
+/*  Winning cell highlight */
 .winner {
   background-color: purple !important;
   color: white;
