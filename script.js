@@ -1,73 +1,71 @@
-const submitBtn = document.getElementById('submit');
-const board = document.getElementById('board');
-const cells = document.querySelectorAll('.cell');
-const message = document.getElementById('message');
+document.getElementById("submit").addEventListener("click", startGame);
 
-let player1 = '';
-let player2 = '';
-let currentPlayer = 'X';
-let gameActive = false;
-let boardState = Array(9).fill('');
+let player1 = "", player2 = "";
+let currentPlayer = "";
+let currentSymbol = "";
+let board = ["", "", "", "", "", "", "", "", ""];
+let gameActive = true;
 
-submitBtn.addEventListener('click', () => {
-  player1 = document.getElementById('player1').value.trim() || 'Player1';
-  player2 = document.getElementById('player2').value.trim() || 'Player2';
+function startGame() {
+    player1 = document.getElementById("player1").value || "Player1";
+    player2 = document.getElementById("player2").value || "Player2";
 
-  document.getElementById('player-input').style.display = 'none';
-  board.style.display = 'grid';
-  message.textContent = `${player1}, you're up`;
-  gameActive = true;
-});
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
 
-cells.forEach(cell => {
-  cell.addEventListener('click', () => {
-    const index = cell.getAttribute('data-index');
+    currentPlayer = player1;
+    currentSymbol = "x";
+    document.getElementById("message").innerText = `${currentPlayer}, you're up`;
 
-    if (!gameActive || boardState[index]) return;
+    document.querySelectorAll(".cell").forEach(cell => {
+        cell.innerText = "";
+        cell.addEventListener("click", handleCellClick, { once: true });
+    });
 
-    boardState[index] = currentPlayer;
-    cell.textContent = currentPlayer;
-
-    if (checkWin()) {
-      message.textContent = `${currentPlayer === 'X' ? player1 : player2}, congratulations you won! 🎉`;
-      gameActive = false;
-      return;
-    }
-
-    if (isDraw()) {
-      message.textContent = "It's a draw!";
-      gameActive = false;
-      return;
-    }
-
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    message.textContent = `${currentPlayer === 'X' ? player1 : player2}, you're up`;
-  });
-});
-
-function checkWin() {
-  const winPatterns = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-    [0, 4, 8], [2, 4, 6]             // diagonals
-  ];
-
-  for (let pattern of winPatterns) {
-    const [a, b, c] = pattern;
-    if (
-      cells[a].textContent &&
-      cells[a].textContent === cells[b].textContent &&
-      cells[a].textContent === cells[c].textContent
-    ) {
-      cells[a].classList.add("winner");
-      cells[b].classList.add("winner");
-      cells[c].classList.add("winner");
-      return true;
-    }
-  }
-  return false;
+    board = ["", "", "", "", "", "", "", "", ""];
+    gameActive = true;
 }
 
-function isDraw() {
-  return [...cells].every(cell => cell.textContent !== "");
+function handleCellClick(event) {
+    if (!gameActive) return;
+
+    const cell = event.target;
+    const cellIndex = parseInt(cell.id) - 1;
+
+    if (board[cellIndex] !== "") return;
+
+    board[cellIndex] = currentSymbol;
+    cell.innerText = currentSymbol;
+
+    if (checkWinner()) {
+        document.getElementById("message").innerText = `${currentPlayer} congratulations you won!`;
+        gameActive = false;
+        return;
+    }
+
+    if (board.every(cell => cell !== "")) {
+        document.getElementById("message").innerText = "It's a draw!";
+        return;
+    }
+
+    switchPlayer();
+}
+
+function switchPlayer() {
+    currentPlayer = currentPlayer === player1 ? player2 : player1;
+    currentSymbol = currentSymbol === "x" ? "o" : "x";
+    document.getElementById("message").innerText = `${currentPlayer}, you're up`;
+}
+
+function checkWinner() {
+    const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+        [0, 4, 8], [2, 4, 6]             
+    ];
+
+    return winPatterns.some(pattern => {
+        const [a, b, c] = pattern;
+        return board[a] && board[a] === board[b] && board[a] === board[c];
+    });
 }
