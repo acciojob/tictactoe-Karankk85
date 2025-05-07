@@ -10,12 +10,12 @@ let gameActive = false;
 let boardState = Array(9).fill('');
 
 submitBtn.addEventListener('click', () => {
-  player1 = document.getElementById('player1').value.trim() || 'Player 1';
-  player2 = document.getElementById('player2').value.trim() || 'Player 2';
+  player1 = document.getElementById('player1').value.trim() || 'Player1';
+  player2 = document.getElementById('player2').value.trim() || 'Player2';
 
   document.getElementById('player-input').style.display = 'none';
   board.style.display = 'grid';
-  message.textContent = `${player1}'s Turn (X)`;
+  message.textContent = `${player1}, you're up`;
   gameActive = true;
 });
 
@@ -29,7 +29,7 @@ cells.forEach(cell => {
     cell.textContent = currentPlayer;
 
     if (checkWin()) {
-      message.textContent = `${currentPlayer === 'X' ? player1 : player2} congratulations you won! 🎉`;
+      message.textContent = `${currentPlayer === 'X' ? player1 : player2}, congratulations you won! 🎉`;
       gameActive = false;
       return;
     }
@@ -41,7 +41,7 @@ cells.forEach(cell => {
     }
 
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    message.textContent = `${currentPlayer === 'X' ? player1 : player2}'s Turn (${currentPlayer})`;
+    message.textContent = `${currentPlayer === 'X' ? player1 : player2}, you're up`;
   });
 });
 
@@ -49,7 +49,7 @@ function checkWin() {
   const winPatterns = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
     [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-    [0, 4, 8], [2, 4, 6]            // diagonals
+    [0, 4, 8], [2, 4, 6]             // diagonals
   ];
 
   for (let pattern of winPatterns) {
